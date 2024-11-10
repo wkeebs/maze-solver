@@ -38,20 +38,20 @@ class Cell:
         bottom_left = Point(self.x1, self.y2)
         top_right = Point(self.x2, self.y1)
         bottom_right = Point(self.x2, self.y2)
+        
+        left_colour = "black" if self.has_left_wall else "white"
+        self.__win.draw_line(Line(top_left, bottom_left), left_colour)
+        
+        top_colour = "black" if self.has_top_wall else "white"
+        self.__win.draw_line(Line(top_left, top_right), top_colour)
+        
+        right_colour = "black" if self.has_right_wall else "white"
+        self.__win.draw_line(Line(top_right, bottom_right), right_colour)
+        
+        bottom_colour = "black" if self.has_bottom_wall else "white"
+        self.__win.draw_line(Line(bottom_left, bottom_right), bottom_colour)
 
-        lines = []
-        if self.has_left_wall:
-            lines.append(Line(top_left, bottom_left))
-        if self.has_top_wall:
-            lines.append(Line(top_left, top_right))
-        if self.has_right_wall:
-            lines.append(Line(top_right, bottom_right))
-        if self.has_bottom_wall:
-            lines.append(Line(bottom_left, bottom_right))
-
-        for line in lines:
-            self.__win.draw_line(line)
-
+            
     def draw_move(self, other: Self, undo: bool = False):
         """
         : @summary :
