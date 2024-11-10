@@ -12,7 +12,7 @@ class Maze:
         num_cols: int,
         cell_size_x: int,
         cell_size_y: int,
-        win: Window
+        win: Window = None
     ):
         """
         : @summary :
@@ -37,7 +37,7 @@ class Maze:
         self.__cell_size_y = cell_size_y
         self.__win = win
 
-        self.__cells = []
+        self.cells = []
         self.create_cells()
 
     def create_cells(self):
@@ -56,10 +56,13 @@ class Maze:
                 y2 = y1 + self.__cell_size_y
                 new_cell = Cell(x1, y1, x2, y2, self.__win)
                 row.append(new_cell)
-            self.__cells.append(row)
-
+            self.cells.append(row)
+            
+        if self.__win is None:
+            return
+        
         # draw and animate the cells
-        for row in self.__cells:
+        for row in self.cells:
             for cell in row:
                 cell.draw()
 
@@ -69,5 +72,7 @@ class Maze:
         Animate the maze for a frame, then sleep.
         ___________________
         """
+        if self.__win is None:
+            return
         self.__win.redraw()
         time.sleep(0.05)
