@@ -47,6 +47,76 @@ class Maze:
         self.create_cells()
         self.__break_entrance_and_exit()
         self.__break_walls(0, 0)
+        self.__reset_cells_visited()
+
+    def solve(self):
+        """
+        : @summary :
+        Solves the maze.
+        ___________________
+        """
+        return self.__solve_rec(0, 0)
+
+    def __solve_rec(self, i, j):
+        self.__animate()
+
+        # vist the current cell
+        self.cells[i][j].visited = True
+
+        # if we are at the end cell, we are done!
+        if i == self.__num_cols - 1 and j == self.__num_rows - 1:
+            return True
+
+        # move left if there is no wall and it hasn't been visited
+        if (
+            i > 0
+            and not self.cells[i][j].has_left_wall
+            and not self.cells[i - 1][j].visited
+        ):
+            self.cells[i][j].draw_move(self.cells[i - 1][j])
+            if self.__solve_rec(i - 1, j):
+                return True
+            else:
+                self.cells[i][j].draw_move(self.cells[i - 1][j], True)
+
+        # move right if there is no wall and it hasn't been visited
+        if (
+            i < self.__num_cols - 1
+            and not self.cells[i][j].has_right_wall
+            and not self.cells[i + 1][j].visited
+        ):
+            self.cells[i][j].draw_move(self.cells[i + 1][j])
+            if self.__solve_rec(i + 1, j):
+                return True
+            else:
+                self.cells[i][j].draw_move(self.cells[i + 1][j], True)
+
+        # move up if there is no wall and it hasn't been visited
+        if (
+            j > 0
+            and not self.cells[i][j].has_top_wall
+            and not self.cells[i][j - 1].visited
+        ):
+            self.cells[i][j].draw_move(self.cells[i][j - 1])
+            if self.__solve_rec(i, j - 1):
+                return True
+            else:
+                self.cells[i][j].draw_move(self.cells[i][j - 1], True)
+
+        # move down if there is no wall and it hasn't been visited
+        if (
+            j < self.__num_rows - 1
+            and not self.cells[i][j].has_bottom_wall
+            and not self.cells[i][j + 1].visited
+        ):
+            self.cells[i][j].draw_move(self.cells[i][j + 1])
+            if self.__solve_rec(i, j + 1):
+                return True
+            else:
+                self.cells[i][j].draw_move(self.cells[i][j + 1], True)
+
+        # we went the wrong way let the previous cell know by returning False
+        return False
 
     def create_cells(self):
         """
@@ -169,3 +239,13 @@ class Maze:
 
             # recursively visit the next cell
             self.__break_walls(next_index[0], next_index[1])
+
+    def __reset_cells_visited(self):
+        """
+        : @summary :
+        Resets all cells to unvisited.
+        ___________________
+        """
+        for row in self.cells:
+            for cell in row:
+                cell.visited = False
