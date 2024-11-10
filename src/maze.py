@@ -1,6 +1,7 @@
 from window import Window
 from cell import Cell
 import time
+import random
 
 
 class Maze:
@@ -12,7 +13,8 @@ class Maze:
         num_cols: int,
         cell_size_x: int,
         cell_size_y: int,
-        win: Window = None
+        win: Window = None,
+        seed: int = None,
     ):
         """
         : @summary :
@@ -27,6 +29,7 @@ class Maze:
             * cell_size_x (int): the width of cells
             * cell_size_y (int): the height of cells
             * win (Window): the window to render in
+            * seed (int): a seed for deterministic testing
         ___________________
         """
         self.__x = x
@@ -37,8 +40,13 @@ class Maze:
         self.__cell_size_y = cell_size_y
         self.__win = win
 
+        if seed is not None:
+            random.seed(seed)
+
         self.cells = []
         self.create_cells()
+        self.__break_entrance_and_exit()
+        self.__break_walls(0, 0)
 
     def create_cells(self):
         """
@@ -57,16 +65,30 @@ class Maze:
                 new_cell = Cell(x1, y1, x2, y2, self.__win)
                 row.append(new_cell)
             self.cells.append(row)
-            
+
         if self.__win is None:
             return
-        
+
         # draw and animate the cells
-        for row in self.cells:
-            for cell in row:
-                cell.draw()
-                
-        self.__break_entrance_and_exit()
+        for i in range(len(self.cells)):
+            for j in range(len(self.cells[i])):
+                self.__draw_cell(i, j)
+
+    def __draw_cell(self, i: int, j: int):
+        """
+        : @summary :
+        Draws a cell on the canvas.
+        ___________________
+
+        : @args :
+            * i (int): the row of the cell to draw
+            * j (int): the col of the cell to draw
+        ___________________
+        """
+        if self.__win is None:
+            return
+        self.cells[i][j].draw()
+        self.__win.redraw()
 
     def __animate(self):
         """
@@ -87,8 +109,63 @@ class Maze:
         """
         top_left = self.cells[0][0]
         top_left.has_top_wall = False
-        top_left.draw()
-        
+        self.__draw_cell(0, 0)
+
         bottom_right = self.cells[-1][-1]
         bottom_right.has_bottom_wall = False
-        bottom_right.draw()
+        self.__draw_cell(-1, -1)
+
+    def __break_walls(self, i: int, j: int):
+        """
+        : @summary :
+        A recursive method that uses Depth-First Search (DFS) to randomly
+        break walls (based on the seed) to create a maze.
+        ___________________
+
+        : @args :
+            * i (int): cell row
+            * j (int): cell col
+        ___________________
+        """
+        self.cells[i][j].visited = True  # mark current cell as visited
+
+        while True:
+            to_visit = []
+
+            # determine which cell(s) to visit next
+            if i > 0 and not self.cells[i - 1][j].visited:  # left
+                to_visit.append((i - 1, j))
+            # right
+            if i < self.__num_cols - 1 and not self.cells[i + 1][j].visited:
+                to_visit.append((i + 1, j))
+            if j > 0 and not self.cells[i][j - 1].visited:  # up
+                to_visit.append((i, j - 1))
+            # down
+            if j < self.__num_rows - 1 and not self.cells[i][j + 1].visited:
+                to_visit.append((i, j + 1))
+
+            # if there is nowhere to go from here just break out
+            if len(to_visit) == 0:
+                self.__draw_cell(i, j)
+                return
+
+            # randomly choose the next direction to go
+            direction_index = random.randrange(len(to_visit))
+            next_index = to_visit[direction_index]
+
+            # knock out walls between this cell and the next cell(s)
+            if next_index[0] == i + 1:  # right
+                self.cells[i][j].has_right_wall = False
+                self.cells[i + 1][j].has_left_wall = False
+            if next_index[0] == i - 1:  # left
+                self.cells[i][j].has_left_wall = False
+                self.cells[i - 1][j].has_right_wall = False
+            if next_index[1] == j + 1:  # down
+                self.cells[i][j].has_bottom_wall = False
+                self.cells[i][j + 1].has_top_wall = False
+            if next_index[1] == j - 1:  # up
+                self.cells[i][j].has_top_wall = False
+                self.cells[i][j - 1].has_bottom_wall = False
+
+            # recursively visit the next cell
+            self.__break_walls(next_index[0], next_index[1])

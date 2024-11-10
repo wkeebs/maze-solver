@@ -27,6 +27,7 @@ class Cell:
         self.x2 = x2
         self.y2 = y2
         self.__win = win
+        self.visited = False
 
     def draw(self):
         """
@@ -38,20 +39,19 @@ class Cell:
         bottom_left = Point(self.x1, self.y2)
         top_right = Point(self.x2, self.y1)
         bottom_right = Point(self.x2, self.y2)
-        
+
         left_colour = "black" if self.has_left_wall else "white"
         self.__win.draw_line(Line(top_left, bottom_left), left_colour)
-        
+
         top_colour = "black" if self.has_top_wall else "white"
         self.__win.draw_line(Line(top_left, top_right), top_colour)
-        
+
         right_colour = "black" if self.has_right_wall else "white"
         self.__win.draw_line(Line(top_right, bottom_right), right_colour)
-        
+
         bottom_colour = "black" if self.has_bottom_wall else "white"
         self.__win.draw_line(Line(bottom_left, bottom_right), bottom_colour)
 
-            
     def draw_move(self, other: Self, undo: bool = False):
         """
         : @summary :
