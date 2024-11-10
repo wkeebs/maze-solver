@@ -65,6 +65,8 @@ class Maze:
         for row in self.cells:
             for cell in row:
                 cell.draw()
+                
+        self.__break_entrance_and_exit()
 
     def __animate(self):
         """
@@ -76,3 +78,17 @@ class Maze:
             return
         self.__win.redraw()
         time.sleep(0.05)
+
+    def __break_entrance_and_exit(self):
+        """
+        : @summary :
+        Removes the top of the top-left cell and the bottom of the bottom-right cell.
+        ___________________
+        """
+        top_left = self.cells[0][0]
+        top_left.has_top_wall = False
+        top_left.draw()
+        
+        bottom_right = self.cells[-1][-1]
+        bottom_right.has_bottom_wall = False
+        bottom_right.draw()
