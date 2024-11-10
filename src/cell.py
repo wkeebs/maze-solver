@@ -22,10 +22,10 @@ class Cell:
         self.has_right_wall = True
         self.has_top_wall = True
         self.has_bottom_wall = True
-        self.__x1 = x1
-        self.__y1 = y1
-        self.__x2 = x2
-        self.__y2 = y2
+        self.x1 = x1
+        self.y1 = y1
+        self.x2 = x2
+        self.y2 = y2
         self.__win = win
 
     def draw(self):
@@ -34,10 +34,10 @@ class Cell:
         Draws the cell in the window.
         ___________________
         """
-        top_left = Point(self.__x1, self.__y1)
-        bottom_left = Point(self.__x1, self.__y2)
-        top_right = Point(self.__x2, self.__y1)
-        bottom_right = Point(self.__x2, self.__y2)
+        top_left = Point(self.x1, self.y1)
+        bottom_left = Point(self.x1, self.y2)
+        top_right = Point(self.x2, self.y1)
+        bottom_right = Point(self.x2, self.y2)
 
         lines = []
         if self.has_left_wall:
@@ -63,10 +63,16 @@ class Cell:
             * undo (bool): whether the move is an "undo" move or not
         ___________________
         """
-        self_middle = Point(self.__x1 + self.__x2 // 2,
-                            self.__y1 + self.__y2 // 2)
-        other_middle = Point(other.__x1 + other.__x2 // 2,
-                             other.__y1 + other.__y2 // 2)
+        self_width = self.x2 - self.x1
+        self_height = self.y2 - self.y1
+        self_middle = Point(self.x1 + (self_width // 2),
+                            self.y1 + (self_height // 2))
+
+        other_width = other.x2 - other.x1
+        other_height = other.y2 - other.y1
+        other_middle = Point(other.x1 + (other_width // 2),
+                             other.y1 + (other_height // 2))
+        
         colour = "gray" if undo else "red"
         connecting_line = Line(self_middle, other_middle)
         self.__win.draw_line(connecting_line, colour)
