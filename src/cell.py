@@ -72,7 +72,7 @@ class Cell:
         other_height = other.y2 - other.y1
         other_middle = Point(other.x1 + (other_width // 2),
                              other.y1 + (other_height // 2))
-        
+
         colour = "gray" if undo else "red"
         connecting_line = Line(self_middle, other_middle)
         self.__win.draw_line(connecting_line, colour)
