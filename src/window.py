@@ -1,9 +1,9 @@
 from tkinter import Tk, BOTH, Canvas
-from typing import Self
+from draw import Line, Point
 
 
 class Window:
-    def __init__(self: Self, width: int, height: int) -> None:
+    def __init__(self, width: int, height: int):
         """
         : @summary :
         Represents the main GUI window.
@@ -25,7 +25,7 @@ class Window:
         self.__root.protocol("WM_DELETE_WINDOW", self.close)  # binds close
         self.__canvas.pack(fill=BOTH, expand=1)
 
-    def redraw(self: Self) -> None:
+    def redraw(self):
         """
         : @summary :
         Redraws the canvas.
@@ -34,7 +34,7 @@ class Window:
         self.__root.update_idletasks()
         self.__root.update()
 
-    def wait_for_close(self: Self) -> None:
+    def wait_for_close(self):
         """
         : @summary :
         The main render loop. Redraws whilst the window is running.
@@ -44,7 +44,7 @@ class Window:
         while self.__running:
             self.redraw()
 
-    def close(self: Self) -> None:
+    def close(self):
         """
         : @summary :
         Ends the main loop.
@@ -52,3 +52,16 @@ class Window:
         """
         print("Closing window...")
         self.__running = False
+
+    def draw_line(self, line: Line, fill_color: str):
+        """
+        : @summary :
+        Renders a line on the canvas of the window.
+        ___________________
+
+        : @args :
+            * line (Line): the line to draw
+            * fill_color (str): the colour to draw the line
+        ___________________
+        """
+        line.draw(self.__canvas, fill_color)
