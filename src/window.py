@@ -53,7 +53,7 @@ class Window:
         print("Closing window...")
         self.__running = False
 
-    def draw_line(self, line: Line, fill_color: str):
+    def draw_line(self, line: Line, fill_color: str = "black"):
         """
         : @summary :
         Renders a line on the canvas of the window.

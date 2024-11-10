@@ -31,7 +31,7 @@ class Line:
         self.__point1 = point1
         self.__point2 = point2
 
-    def draw(self, canvas: Canvas, fill_color: str):
+    def draw(self, canvas: Canvas, fill_color: str = "black"):
         """
         : @summary :
         Renders the line on a canvas.
